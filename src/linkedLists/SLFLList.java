@@ -10,6 +10,7 @@ package linkedLists;
 import java.util.NoSuchElementException;
 
 import linkedLists.LinkedList;
+import linkedLists.AbstractSLList.SNode;
 
 public class SLFLList<E> extends SLList<E>
 {
@@ -22,20 +23,35 @@ public class SLFLList<E> extends SLList<E>
 	}
 	
 	
-	public void addFirstNode(Node<E> nuevo) {
-		SNode<E> sn = (SNode<E>) nuevo;
-		sn.setNext(first);
-		first = sn;
-		length++;
+	public void addFirstNode(Node<E> nuevo) {	
+		// Pre: nuevo is not a node in the list
+		((SNode<E>) nuevo).setNext(first); 
+		first = (SNode<E>) nuevo; 
+		length++; 
+		if(length==1){
+			last=first;
+		}
 	}
 
 	public void addNodeAfter(Node<E> target, Node<E> nuevo) {
-		// TODO Auto-generated method stub
 		
+		((SNode<E>) nuevo).setNext(((SNode<E>) target).getNext());
+	    ((SNode<E>) target).setNext((SNode<E>) nuevo); 
+	    
+		if(target==last){
+			last = (SNode<E>) nuevo;
+		}
+		
+		length++; 
 	}
 
 	public void addNodeBefore(Node<E> target, Node<E> nuevo) {
-		// TODO Auto-generated method stub
+		if (target == first)
+			this.addFirstNode(nuevo); 
+		else { 
+			Node<E> prevNode = findNodePrevTo(target);  
+			this.addNodeAfter(prevNode, nuevo); 
+		}
 		
 	}
 
@@ -45,8 +61,11 @@ public class SLFLList<E> extends SLList<E>
 	}
 
 	public Node<E> getLastNode() throws NoSuchElementException {
-		// TODO Auto-generated method stub
-		return null;
+		if (first == null)
+			throw new NoSuchElementException("getLastNode(): Empty list."); 
+		else { 
+			return last; 
+		}
 	}
 
 	public Node<E> getNodeAfter(Node<E> target) throws NoSuchElementException {
@@ -61,12 +80,23 @@ public class SLFLList<E> extends SLList<E>
 	}
 
 	public int length() {
-		// TODO Auto-generated method stub
-		return 0;
+		return length;
 	}
 
 	public void removeNode(Node<E> target) {
-		// TODO Auto-generated method stub
+		if(target==first){
+			first=first.getNext();
+		}
+		else if(target==last){
+			last= (SNode<E>)this.getNodeBefore(target);
+		}
+		else { 
+			SNode<E> prevNode = (SNode<E>) this.getNodeBefore(target); 
+			prevNode.setNext(((SNode<E>) target).getNext()); 
+		}
+		((SNode<E>) target).clean();   // clear all references from target
+		
+		length--; 
 		
 	}
 	
