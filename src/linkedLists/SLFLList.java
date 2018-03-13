@@ -12,8 +12,7 @@ import java.util.NoSuchElementException;
 import linkedLists.LinkedList;
 import linkedLists.AbstractSLList.SNode;
 
-public class SLFLList<E> extends SLList<E>
-{
+public class SLFLList<E> extends SLList<E> {
 	private SNode<E> first, last;   // reference to the first node and to the last node
 	int length; 
 	
@@ -25,6 +24,7 @@ public class SLFLList<E> extends SLList<E>
 	
 	public void addFirstNode(Node<E> nuevo) {	
 		// Pre: nuevo is not a node in the list
+		
 		((SNode<E>) nuevo).setNext(first); 
 		first = (SNode<E>) nuevo; 
 		length++; 
@@ -34,11 +34,13 @@ public class SLFLList<E> extends SLList<E>
 	}
 
 	public void addNodeAfter(Node<E> target, Node<E> nuevo) {
+		// Pre: target is a node in the list
+		// Pre: nuevo is not a node in the list
 		
 		((SNode<E>) nuevo).setNext(((SNode<E>) target).getNext());
 	    ((SNode<E>) target).setNext((SNode<E>) nuevo); 
 	    
-		if(target==last){
+		if((((SNode<E>) nuevo).getNext()==null)){
 			last = (SNode<E>) nuevo;
 		}
 		
@@ -46,18 +48,25 @@ public class SLFLList<E> extends SLList<E>
 	}
 
 	public void addNodeBefore(Node<E> target, Node<E> nuevo) {
+		// Pre: target is a node in the list
+		// Pre: nuevo is not a node in the list
+		
 		if (target == first)
 			this.addFirstNode(nuevo); 
 		else { 
-			Node<E> prevNode = findNodePrevTo(target);  
+			Node<E> prevNode = getNodeAfter(target);  
 			this.addNodeAfter(prevNode, nuevo); 
 		}
 		
 	}
 
 	public Node<E> getFirstNode() throws NoSuchElementException {
-		// TODO Auto-generated method stub
-		return null;
+		if(first==null) {
+			throw new NoSuchElementException("getLastNode(): Empty list.");
+		}
+		else {
+			return first;
+		}
 	}
 
 	public Node<E> getLastNode() throws NoSuchElementException {
@@ -69,14 +78,23 @@ public class SLFLList<E> extends SLList<E>
 	}
 
 	public Node<E> getNodeAfter(Node<E> target) throws NoSuchElementException {
-		// TODO Auto-generated method stub
-		return null;
+		SNode<E> aNode = ((SNode<E>) target).getNext(); 
+		if (aNode == null)  
+			throw new NoSuchElementException("getNextNode(...) : target is the last node."); 
+		else 
+			return aNode;
 	}
 
 	public Node<E> getNodeBefore(Node<E> target)
 			throws NoSuchElementException {
-		// TODO Auto-generated method stub
-		return null;
+		if (target == first)  
+			throw new NoSuchElementException("getPrevNode(...) : target is the first node."); 
+		else {
+			SNode<E> prev = first; 
+			while (prev != null && prev.getNext() != target) 
+			prev = prev.getNext();  
+			return prev;
+		}
 	}
 
 	public int length() {
@@ -88,11 +106,13 @@ public class SLFLList<E> extends SLList<E>
 			first=first.getNext();
 		}
 		else if(target==last){
-			last= (SNode<E>)this.getNodeBefore(target);
+			last = (SNode<E>)this.getNodeBefore(target);
+			SNode<E> prevNode = (SNode<E>) this.getNodeBefore(target); 
+			prevNode.setNext(((SNode<E>) target).getNext()); 
 		}
 		else { 
 			SNode<E> prevNode = (SNode<E>) this.getNodeBefore(target); 
-			prevNode.setNext(((SNode<E>) target).getNext()); 
+			prevNode.setNext(((SNode<E>) target).getNext());
 		}
 		((SNode<E>) target).clean();   // clear all references from target
 		
@@ -102,6 +122,17 @@ public class SLFLList<E> extends SLList<E>
 	
 	public Node<E> createNewNode() {
 		return new SNode<E>();
+	}
+	
+	public Object[] toArray() {
+		Object[] a = new Object[length];
+		int i = 0;
+		for (SNode<E> n = first; i < length; n = n.getNext()) {
+            a[i]=n.getElement();
+            i++;
+		}
+		
+        return a;
 	}
 
 }

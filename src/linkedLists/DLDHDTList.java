@@ -2,12 +2,17 @@ package linkedLists;
 
 import java.util.NoSuchElementException;
 
+import linkedLists.AbstractSLList.SNode;
+
 public class DLDHDTList<E> extends AbstractDLList<E> {
 	private DNode<E> header, trailer; 
 	private int length; 
 	
 	public DLDHDTList() { 
-		// ADD CODE HERE to generate empty linked list of this type 
+		header = new DNode<E>(null, null, null);
+		trailer = new DNode<E>(null, header, null);
+		header.setNext(trailer);
+		length = 0;
 	}
 	
 	public void addFirstNode(Node<E> nuevo) {
@@ -36,7 +41,14 @@ public class DLDHDTList<E> extends AbstractDLList<E> {
 	}
 
 	public void addNodeBefore(Node<E> target, Node<E> nuevo) {
-		// ADD CODE HERE
+		DNode<E> dnuevo = (DNode<E>) nuevo; 
+		DNode<E> nAfter = (DNode<E>) target;
+		DNode<E> nBefore = nAfter.getPrev();
+	    dnuevo.setPrev(nBefore);
+	    dnuevo.setNext(nAfter);
+	    nAfter.setPrev(dnuevo);
+	    nBefore.setNext(dnuevo);
+	    length++;
 	}
 
 	public Node<E> createNewNode() {
@@ -57,14 +69,20 @@ public class DLDHDTList<E> extends AbstractDLList<E> {
 
 	public Node<E> getNodeAfter(Node<E> target)
 			throws NoSuchElementException {
-		// ADD CODE HERE AND MODIFY RETURN ACCORDINGLY
-		return null; 
+		DNode<E> nBefore = (DNode<E>) target;
+		if (nBefore == trailer) 
+			throw new IllegalArgumentException ("getNodeAfter: target is trailer");
+		
+		return nBefore.getNext();
 	}
 
 	public Node<E> getNodeBefore(Node<E> target)
 			throws NoSuchElementException {
-		// ADD CODE HERE AND MODIFY RETURN ACCORDINGLY
-		return null; 
+		DNode<E> nAfter = (DNode <E>) target;
+		if (nAfter == header) 
+			throw new IllegalArgumentException ("getNodeBefore: target is header");
+		
+		return nAfter.getPrev();
 	}
 
 	public int length() {
@@ -72,7 +90,15 @@ public class DLDHDTList<E> extends AbstractDLList<E> {
 	}
 
 	public void removeNode(Node<E> target) {
-		// ADD CODE HERE to disconnect target from the linked list, reduce lent, clean target...
+		DNode<E> dtarget = (DNode<E>) target;
+		DNode<E> nBefore = dtarget.getPrev();
+	    DNode<E> nAfter = dtarget.getNext();
+
+	    nAfter.setPrev(nBefore);
+	    nBefore.setNext(nAfter);
+	    dtarget.setPrev(null);
+	    dtarget.setNext(null);
+	    length--;
 	}
 	
 	/**
@@ -106,6 +132,17 @@ public class DLDHDTList<E> extends AbstractDLList<E> {
 	    } finally {
 	        super.finalize();
 	    }
+	}
+
+	public Object[] toArray() {
+		Object[] a = new Object[length];
+		int i = 0;
+		for (DNode<E> n = header; i < length; n = n.getNext()) {
+			a[i]=n.getElement();
+	        i++;
+		}
+		
+		return a;
 	}
 
 }

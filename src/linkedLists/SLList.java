@@ -181,4 +181,16 @@ public class SLList<E> extends AbstractSLList<E> {
 		return new SNode<E>();
 	}
 
+	
+	public Object[] toArray() {
+		Object[] a = new Object[length];
+		int i = 0;
+		for (SNode<E> n = head; i < length; n = n.getNext()) {
+            a[i]=n.getElement();
+            i++;
+		}
+		
+        return a;
+	}
+
 }

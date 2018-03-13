@@ -1,5 +1,6 @@
 package testers;
 
+import linkedLists.SLFLList;
 import linkedLists.SLList;
 import indexList.IndexList;
 import indexList.LLIndexList;
@@ -123,5 +124,4 @@ public class IndexListTester {
 			System.out.println(e); 
 		}
 	}
-	
 }
